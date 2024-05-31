@@ -9,6 +9,8 @@ const Index = () => {
   const [age, setAge] = useState("");
   const [location, setLocation] = useState("");
   const [filteredPets, setFilteredPets] = useState([]);
+  const [isFormVisible, setIsFormVisible] = useState(false);
+  const [selectedPet, setSelectedPet] = useState(null);
 
   const handleSearch = () => {
     // Example pets data; replace with actual data source
@@ -32,6 +34,11 @@ const Index = () => {
   useEffect(() => {
     handleSearch();
   }, []);
+
+  const handleAdoptClick = (pet) => {
+    setSelectedPet(pet);
+    setIsFormVisible(true);
+  };
 
   return (
     <Container maxW="container.xl" p={0}>
@@ -93,7 +100,7 @@ const Index = () => {
                 <Text mb={4}>Breed: {pet.breed}</Text>
                 <Text mb={4}>Age: {pet.age}</Text>
                 <Text mb={4}>Location: {pet.location}</Text>
-                <Button colorScheme="teal">Adopt Me</Button>
+                <Button colorScheme="teal" onClick={() => handleAdoptClick(pet)}>Adopt Me</Button>
               </Box>
             </Box>
           ))}
@@ -109,6 +116,21 @@ const Index = () => {
           {/* Repeat similar blocks for more pets */}
         </Flex>
       </Box>
+
+      {isFormVisible && (
+        <Box as="section" id="adoption-form" py={20} textAlign="center">
+          <Heading size="xl" mb={10}>Adoption Request Form</Heading>
+          <Box maxW="md" mx="auto">
+            <VStack spacing={4}>
+              <Text>Adopting: {selectedPet.name}</Text>
+              <Input placeholder="Your Name" />
+              <Input placeholder="Your Email" />
+              <Textarea placeholder="Additional Information" />
+              <Button colorScheme="teal" onClick={() => alert('Adoption request submitted!')}>Submit Request</Button>
+            </VStack>
+          </Box>
+        </Box>
+      )}
 
       {/* How It Works Section */}
       <Box as="section" id="how-it-works" bg="gray.100" py={20} textAlign="center">
