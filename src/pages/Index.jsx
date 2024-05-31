@@ -1,7 +1,38 @@
-import { Box, Button, Container, Flex, Heading, HStack, Image, Input, Stack, Text, Textarea, VStack } from "@chakra-ui/react";
+import { Box, Button, Container, Flex, Heading, HStack, Image, Input, Stack, Text, Textarea, VStack, Select } from "@chakra-ui/react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const Index = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [species, setSpecies] = useState("");
+  const [breed, setBreed] = useState("");
+  const [age, setAge] = useState("");
+  const [location, setLocation] = useState("");
+  const [filteredPets, setFilteredPets] = useState([]);
+
+  const handleSearch = () => {
+    // Example pets data; replace with actual data source
+    const pets = [
+      { name: "Buddy", species: "Dog", breed: "Labrador", age: "2", location: "New York" },
+      { name: "Mittens", species: "Cat", breed: "Siamese", age: "3", location: "Los Angeles" },
+      // Add more pets here
+    ];
+
+    const results = pets.filter(pet => 
+      (species === "" || pet.species === species) &&
+      (breed === "" || pet.breed === breed) &&
+      (age === "" || pet.age === age) &&
+      (location === "" || pet.location === location) &&
+      (searchTerm === "" || pet.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+
+    setFilteredPets(results);
+  };
+
+  useEffect(() => {
+    handleSearch();
+  }, []);
+
   return (
     <Container maxW="container.xl" p={0}>
       {/* Navigation Bar */}
@@ -25,7 +56,47 @@ const Index = () => {
       {/* Available Pets Section */}
       <Box as="section" id="adopt" py={20} textAlign="center">
         <Heading size="xl" mb={10}>Available Pets for Adoption</Heading>
+        <VStack spacing={4} mb={10}>
+          <Input 
+            placeholder="Search by name" 
+            value={searchTerm} 
+            onChange={(e) => setSearchTerm(e.target.value)} 
+          />
+          <Select placeholder="Select species" value={species} onChange={(e) => setSpecies(e.target.value)}>
+            <option value="Dog">Dog</option>
+            <option value="Cat">Cat</option>
+            {/* Add more species options here */}
+          </Select>
+          <Input 
+            placeholder="Breed" 
+            value={breed} 
+            onChange={(e) => setBreed(e.target.value)} 
+          />
+          <Input 
+            placeholder="Age" 
+            value={age} 
+            onChange={(e) => setAge(e.target.value)} 
+          />
+          <Input 
+            placeholder="Location" 
+            value={location} 
+            onChange={(e) => setLocation(e.target.value)} 
+          />
+          <Button colorScheme="teal" onClick={handleSearch}>Search</Button>
+        </VStack>
         <Flex wrap="wrap" justifyContent="center" spacing={10}>
+          {filteredPets.map((pet, index) => (
+            <Box key={index} bg="white" boxShadow="md" borderRadius="md" overflow="hidden" m={4} maxW="sm">
+              <Image src="https://via.placeholder.com/300" alt="Pet Image" />
+              <Box p={6}>
+                <Heading size="md" mb={2}>{pet.name}</Heading>
+                <Text mb={4}>Breed: {pet.breed}</Text>
+                <Text mb={4}>Age: {pet.age}</Text>
+                <Text mb={4}>Location: {pet.location}</Text>
+                <Button colorScheme="teal">Adopt Me</Button>
+              </Box>
+            </Box>
+          ))}
           {/* Example Pet Card */}
           <Box bg="white" boxShadow="md" borderRadius="md" overflow="hidden" m={4} maxW="sm">
             <Image src="https://via.placeholder.com/300" alt="Pet Image" />
